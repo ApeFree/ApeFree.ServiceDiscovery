@@ -2,10 +2,36 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+		<LangVersion>latest</LangVersion>
+
+		<Title>ServiceDiscovery</Title>
+		<Product>ApeFree.ServiceDiscovery</Product>
+		<Version>0.0.1.1</Version>
+		<Authors>Hu JJJJ,Guijie Lee</Authors>
+		<Company>ApeFree</Company>
+		<Copyright>Copyright © 2022-2025 ApeFree, All Rights Reserved.</Copyright>
+		<Description>A lightweight service discovery service based on UDP (for heartbeat and reporting) and HTTP (for registration and querying).</Description>
+
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<RepositoryUrl>https://github.com/ApeFree</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageIcon>ApeFree_64px.png</PackageIcon>
+
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\ApeFree_64px.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net452'">
