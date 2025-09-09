@@ -1,4 +1,4 @@
-﻿using ApeFree.ServiceDiscovery.Entity;
+﻿using ApeFree.ServiceDiscovery.Entities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace ApeFree.ServiceDiscovery
         private UdpClient udpClient;
         private Dictionary<string, string> ServicesInfoList;
         private Timer heartbeatTimer;
-       private HttpClient httpClient;
+        private HttpClient httpClient;
         private IPEndPoint serviceIPAddress;
 
         public ServiceDiscoveryClient(string ipAddress, int httpPort = 4555, int udpPort = 4556)
@@ -77,7 +77,7 @@ namespace ApeFree.ServiceDiscovery
 
 
 
-        public async Task<DiscoveryResponse> Discovery(string sign, DiscoveryType type = DiscoveryType.ByName)
+        public async Task<DiscoveryResponse> Discovery(string sign, DiscoveryType type = DiscoveryType.Name)
         {
             var request = new DiscoveryRequest()
             {

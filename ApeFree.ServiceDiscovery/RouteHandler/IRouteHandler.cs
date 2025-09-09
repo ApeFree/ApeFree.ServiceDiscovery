@@ -1,4 +1,4 @@
-﻿using ApeFree.ServiceDiscovery.Entity;
+﻿using ApeFree.ServiceDiscovery.Entities;
 using System;
 using System.Collections.Generic;
 using System.Net;

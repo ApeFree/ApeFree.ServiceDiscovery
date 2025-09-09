@@ -1,4 +1,4 @@
-﻿using ApeFree.ServiceDiscovery.Entity;
+﻿using ApeFree.ServiceDiscovery.Entities;
 using Newtonsoft.Json;
 using System;
 using System.Net;

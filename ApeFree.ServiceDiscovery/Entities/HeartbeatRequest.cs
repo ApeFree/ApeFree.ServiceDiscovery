@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ApeFree.ServiceDiscovery.Entity
+namespace ApeFree.ServiceDiscovery.Entities
 {
     public class HeartbeatRequest
     {

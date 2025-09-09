@@ -1,4 +1,4 @@
-﻿using ApeFree.ServiceDiscovery.Entity;
+﻿using ApeFree.ServiceDiscovery.Entities;
 using ApeFree.ServiceDiscovery.RouteHandler;
 using Newtonsoft.Json;
 using System;
@@ -9,12 +9,15 @@ using System.Text;
 
 namespace ApeFree.ServiceDiscovery
 {
+    /// <summary>
+    /// 发现服务
+    /// </summary>
     public class DiscoveryService
     {
-
+        // HTTP服务
         private RequestDispatcher httpServer;
         private UdpHeartbeatListener udpServer;
-        private Dictionary<string, ServiceInfo> ServiceInfoList;
+        private Dictionary<string, ServiceInfo> serviceInfoList;
 
         public string IPAddress { get; private set; }
         public int HttpPort { get; private set; }
@@ -29,7 +32,7 @@ namespace ApeFree.ServiceDiscovery
             this.IPAddress = IPAddress;
             HttpPort = httpPort;
             UdpPort = udpPort;
-            ServiceInfoList = new Dictionary<string, ServiceInfo>();
+            serviceInfoList = new Dictionary<string, ServiceInfo>();
             udpServer = new UdpHeartbeatListener(udpPort);
             httpServer = new RequestDispatcher(this.IPAddress, HttpPort);
             udpServer.HeartbeatHandler = OnHeartbeatHandler;
@@ -51,11 +54,11 @@ namespace ApeFree.ServiceDiscovery
         {
             string jsonString = Encoding.UTF8.GetString(bytes);
             var request = JsonConvert.DeserializeObject<HeartbeatRequest>(jsonString);
-            ServiceInfoList = ServiceInfoList.Select(x =>
+            serviceInfoList = serviceInfoList.Select(x =>
             {
-                if (request.ServiceInfoIds.Contains(x.Key) && x.Value.IPAddress == request.IPAddress)
+                if (request.ServiceInfoIds.Contains(x.Key) && x.Value.Address == request.IPAddress)
                 {
-                    x.Value.LastHeartbeatTime = DateTime.Now;
+                    x.Value.LastActiveTimestamp = DateTime.Now;
                 }
                 return x;
             }).ToDictionary(x => x.Key, x => x.Value);
@@ -77,7 +80,7 @@ namespace ApeFree.ServiceDiscovery
 
             lock (writeReadLock)
             {
-                if (ServiceInfoList.Any(x => request.ServiceInfoList.Any(s => s.Name == x.Value.Name)))
+                if (serviceInfoList.Any(x => request.ServiceInfoList.Any(s => s.Name == x.Value.Name)))
                 {
                     throw new ArgumentException("已存在同样名称的服务");
                 }
@@ -87,8 +90,8 @@ namespace ApeFree.ServiceDiscovery
                     foreach (var item in serviceInfoDic)
                     {
                         item.Value.Id = item.Key;
-                        item.Value.LastHeartbeatTime =DateTime.Now;
-                        ServiceInfoList.Add(item.Key, item.Value);
+                        item.Value.LastActiveTimestamp =DateTime.Now;
+                        serviceInfoList.Add(item.Key, item.Value);
                     }
                     return serviceInfoDic.ToDictionary(x => x.Key, x => x.Value.Name);
                 }
@@ -107,12 +110,12 @@ namespace ApeFree.ServiceDiscovery
             {
                 switch (request.DiscoveryType)
                 {
-                    case DiscoveryType.ById:
-                        return ServiceInfoList.Where(x => x.Key == request.Sign && (DateTime.Now - x.Value.LastHeartbeatTime).TotalMilliseconds < HeartbeatTime).Select(x => x.Value).ToList();
-                    case DiscoveryType.ByName:
-                        return ServiceInfoList.Where(x => x.Value.Name == request.Sign && (DateTime.Now - x.Value.LastHeartbeatTime).TotalMilliseconds < HeartbeatTime).Select(x => x.Value).ToList();
-                    case DiscoveryType.ByAlias:
-                        return ServiceInfoList.Where(x => (x.Value.Types != null ? x.Value.Types.Contains(request.Sign) : false) && (DateTime.Now - x.Value.LastHeartbeatTime).TotalMilliseconds < HeartbeatTime).Select(x => x.Value).ToList();
+                    case DiscoveryType.Id:
+                        return serviceInfoList.Where(x => x.Key == request.Sign && (DateTime.Now - x.Value.LastActiveTimestamp).TotalMilliseconds < HeartbeatTime).Select(x => x.Value).ToList();
+                    case DiscoveryType.Name:
+                        return serviceInfoList.Where(x => x.Value.Name == request.Sign && (DateTime.Now - x.Value.LastActiveTimestamp).TotalMilliseconds < HeartbeatTime).Select(x => x.Value).ToList();
+                    case DiscoveryType.Keywords:
+                        return serviceInfoList.Where(x => (x.Value.Keywords != null ? x.Value.Keywords.Contains(request.Sign) : false) && (DateTime.Now - x.Value.LastActiveTimestamp).TotalMilliseconds < HeartbeatTime).Select(x => x.Value).ToList();
                     default:
                         throw new InvalidOperationException("无法以未知的方式筛选服务");
                 }

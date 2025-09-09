@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApeFree.ServiceDiscovery.Entity
+namespace ApeFree.ServiceDiscovery.Entities
 {
     public class ClientInfo
     {

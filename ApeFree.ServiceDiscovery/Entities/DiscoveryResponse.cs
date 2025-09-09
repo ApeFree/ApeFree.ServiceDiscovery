@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ApeFree.ServiceDiscovery.Entity
+namespace ApeFree.ServiceDiscovery.Entities
 {
     public class DiscoveryResponse:BaseResponse
     {
